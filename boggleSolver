@@ -1,0 +1,102 @@
+/**
+ * Given a Boggle board and a dictionary, returns a list of available words in
+ * the dictionary present inside of the Boggle board.
+ * @param {string[][]} grid - The Boggle game board.
+ * @param {string[]} dictionary - The list of available words.
+ * @returns {string[]} solutions - Possible solutions to the Boggle board.
+ */
+ exports.findAllSolutions = function(grid, dictionary) {
+  let solutions = [];
+  // check that grid is an nxn 
+  for (let i = 0, x = grid.length; i < grid.length; i++){
+    if (grid.length != grid[i].length){
+      return solutions;
+    }
+  }
+  // valid grid?
+  if (grid == [] || grid.length[0] == 0){
+    return solutions;
+  }
+  // St + Qu check 
+  for (let i = 0; i < grid.length; i++){
+    for (let j = 0; j < grid[i].length; j++){
+      if (grid[i][j] == 'S' || grid[i][j] == 'Q'){
+        return solutions;
+      }
+    }
+  }
+  // change case
+  for (let i = 0; i < grid.length; i++){
+    for (let j = 0; j < grid[i].length; j++){
+      grid[i][j] = grid[i][j].toLowerCase();
+    }
+  }
+  for (let i = 0; i < dictionary.length; i++){
+    for (let j = 0; j < dictionary[i].length; j++){
+      dictionary[i][j] = dictionary[i][j].toLowerCase();
+    }
+  }
+  // all combinations possible source code: https://www.geeksforgeeks.org/combinations-from-n-arrays-picking-one-element-from-each-array/
+    function allCombos(arr){
+      let combos = [];
+      let n = arr.length;
+      let indices = new Array(n);
+      for(let i = 0; i < n; i++){
+        indices[i] = 0;
+      }
+      while (true){
+      // Print current combination > instead add combo to array
+        for(let i = 0; i < n; i++){
+          combos.push(arr[i][indices[i]])
+        }
+        //   document.write(
+        //   arr[i][indices[i]] + " ");
+        
+        // document.write("<br>");
+        
+        // Find the rightmost array that has more
+        // elements left after the current element
+        // in that array
+        let next = n - 1;
+        while (next >= 0 && (indices[next] + 1 >=
+                    arr[next].length))
+          next--;
+        
+        // No such array is found so no more
+        // combinations left
+        if (next < 0)
+          return;
+        
+        // If found move to next element in that
+        // array
+        indices[next]++;
+        
+        // For all arrays to the right of this
+        // array current index again points to
+        // first element
+        for(let i = next + 1; i < n; i++)
+          indices[i] = 0;
+          }
+      return combos;
+    }
+  // check for solutions in dictionary
+  const tCombos = new Array (allCombos(grid));
+  for (let i = 0; i < tCombos.length; i++){
+    if (tCombos[i] in dictionary == true){
+      solutions.push(tCombos[i])
+    }
+  }
+
+  return solutions;
+}
+
+
+var grid = [['T', 'W', 'Y', 'R'],
+              ['E', 'N', 'P', 'H'],
+              ['G', 'Z', 'Qu', 'R'],
+              ['St', 'N', 'T', 'A']];
+var dictionary = ['art', 'ego', 'gent', 'get', 'net', 'new', 'newt', 'prat',
+                    'pry', 'qua', 'quart', 'quartz', 'rat', 'tar', 'tarp',
+                    'ten', 'went', 'wet', 'arty', 'egg', 'not', 'quar'];
+
+console.log(exports.findAllSolutions(grid, dictionary));
